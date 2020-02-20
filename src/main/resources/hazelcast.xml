@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<hazelcast xmlns="http://www.hazelcast.com/schema/config"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www.hazelcast.com/schema/config
+           http://www.hazelcast.com/schema/config/hazelcast-config-3.12.xsd">
+
+    
+    <group>
+        <name>dev</name>
+        <password>dev-pass</password>
+    </group>
+    
+    <instance-name>hz-Instance1</instance-name>	
+
+    <properties>
+        <property name="hazelcast.slow.operation.detector.stacktrace.logging.enabled">true</property>
+        <property name="hazelcast.logging.type">jdk</property>
+        <property name="hazelcast.rest.enabled">true</property>
+        <property name="hazelcast.diagnostics.enabled">false</property>
+        <property name="hazelcast.diagnostics.metric.level">debug</property>
+        <property name="hazelcast.diagnostics.storeLatency.period.seconds">5</property>
+    </properties>
+
+    <management-center enabled="false">http://localhost:4848/mancenter</management-center>
+    <network>
+        <port auto-increment="true" port-count="100">5701</port>
+        <outbound-ports>
+            <!--
+            Allowed port range when connecting to other nodes.
+            0 or * means use system provided port.
+            -->
+            <ports>0</ports>
+        </outbound-ports>
+        <join>
+            <multicast enabled="false">
+                <multicast-group>224.2.2.3</multicast-group>
+                <multicast-port>54327</multicast-port>
+            </multicast>
+            <tcp-ip enabled="true">
+                <interface>localhost</interface>
+                <member-list>
+                    <member>localhost</member>
+                </member-list>
+            </tcp-ip>
+        </join>
+    </network>
+    
+    <map name="capitals">
+        <in-memory-format>BINARY</in-memory-format>
+        <backup-count>1</backup-count>
+        <async-backup-count>0</async-backup-count>
+        <time-to-live-seconds>2592000</time-to-live-seconds>
+        <max-idle-seconds>2592000</max-idle-seconds>
+        <eviction-policy>LFU</eviction-policy>
+        <max-size policy="PER_NODE">150000</max-size>
+        <eviction-percentage>25</eviction-percentage>
+        <min-eviction-check-millis>100</min-eviction-check-millis>
+        <merge-policy>com.hazelcast.map.merge.PutIfAbsentMapMergePolicy</merge-policy>
+        <cache-deserialized-values>INDEX-ONLY</cache-deserialized-values>
+        <map-store enabled="true" initial-mode="LAZY">
+            <class-name>com.hazelcast.custom.SQLBasedMapStore</class-name>
+            <write-delay-seconds>10</write-delay-seconds>
+            <write-batch-size>10</write-batch-size>
+            <write-coalescing>false</write-coalescing>
+            <properties>
+                <property name="key">country</property>
+                <property name="value">capital</property>
+                <property name="dbdriver">org.apache.derby.jdbc.ClientDriver</property>
+                <property name="dburl">jdbc:derby://localhost:1527/mydb</property>
+                <property name="dbschema">myschema</property>
+                <property name="dbuser">app</property>
+                <property name="dbpass">pass123</property>
+            </properties>
+        </map-store>
+    </map>
+    <lite-member enabled="false"/>
+</hazelcast>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hazelcast-client xmlns="http://www.hazelcast.com/schema/client-config">
+    <group>
+        <name>dev</name>
+        <password>dev-pass</password>
+    </group>
+    <properties>
+        <property name="hazelcast.logging.type">jdk</property>
+    </properties>
+    <network>
+        <cluster-members>
+            <address>localhost:5701</address>
+        </cluster-members>
+        <smart-routing>true</smart-routing>
+        <connection-timeout>1000</connection-timeout>
+        <connection-attempt-period>3000</connection-attempt-period>
+        <connection-attempt-limit>1</connection-attempt-limit>
+    </network>
+</hazelcast-client>
