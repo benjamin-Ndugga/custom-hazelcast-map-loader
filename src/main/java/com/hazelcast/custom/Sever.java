@@ -1,9 +1,5 @@
 package com.hazelcast.custom;
 
-
-
-
-
 import static com.hazelcast.core.Hazelcast.newHazelcastInstance;
 import com.hazelcast.core.HazelcastInstance;
 

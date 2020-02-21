@@ -85,7 +85,7 @@ public class SQLBasedMapStore implements MapStore<String, String>, MapLoaderLife
                 System.out.println("Creating Table: " + mapName + ".");
 
                 //create table using the mapName as the table name
-                connection.createStatement().execute("CREATE TABLE " + mapName + "(" + key_name + " VARCHAR(20)," + value_name + " VARCHAR(20), PRIMARY KEY (" + key_name + "))");
+                connection.createStatement().execute("CREATE TABLE " + mapName + "(" + key_name + " VARCHAR(100)," + value_name + " VARCHAR(100), PRIMARY KEY (" + key_name + "))");
             }
             System.out.println("initialising table for this map <" + mapName + "> done...");
 
