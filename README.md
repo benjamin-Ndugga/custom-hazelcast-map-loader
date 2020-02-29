@@ -1,4 +1,5 @@
-# Custom Hazelcast Maploader
+# Custom Hazelcast Maploader 
+[Issue #16700](https://github.com/hazelcast/hazelcast/issues/16700)
 
 This is a proposal to allow for auto-creation of a map store. In this project I use mysql as the database, however the goal is to be able to use any database.
 
