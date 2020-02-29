@@ -1,11 +1,11 @@
 # Custom Hazelcast Maploader 
 [Issue #16700](https://github.com/hazelcast/hazelcast/issues/16700)
 
-This is a proposal to allow for auto-creation of a map store. In this project I use mysql as the database, however the goal is to be able to use any database.
+The goal of this project is to allow easy configuration of a map store without the need of developing a custom implemetation. This is my proposal for this task. I use mysql as the database.
 
 ### Sample XML Configuration
-We create a simple Map Configuration that looks like the one below:
-Taking the advantage of the properties section, we define the Database Connectivity details and the table name name that will persist the data for this map.
+We create a simple Map Configuration that looks like the one below; taking the advantage of the properties section, we define the Database Connectivity details and the table name with its column details.
+
 ```sh
 <map name="country_codes">
         <in-memory-format>BINARY</in-memory-format>
@@ -36,3 +36,11 @@ Taking the advantage of the properties section, we define the Database Connectiv
         </map-store>
     </map>
 ```
+from this configuration:
+
+- the database name is: mydb
+- user: root
+- password: pass123
+- table name: country_codes
+- key: country
+- value: country_code
