@@ -7,9 +7,10 @@ import com.hazelcast.core.HazelcastInstance;
  *
  * @author Benjamin E Ndugga
  */
-public class Sever {
+public class Server {
 
     public static void main(String[] args) {
+
         HazelcastInstance hazelcastInstance = newHazelcastInstance();
     }
 

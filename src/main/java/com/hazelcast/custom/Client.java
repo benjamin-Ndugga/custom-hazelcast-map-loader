@@ -23,26 +23,13 @@ public class Client {
 
     public static void main(String[] args) throws FileNotFoundException {
 
-//        HazelcastInstance hazelcastInstance = HazelcastClient.newHazelcastClient();
-//
-//        IMap<Object, Object> map_capitals = hazelcastInstance.getMap("capitals");
-//        map_capitals.put("UGANDA", "KAMPALA");
-//
-//        System.out.println("CAPITAL >>> " + map_capitals.get("UGANDA"));
-//
-//        IMap<Object, Object> map_country_codes = hazelcastInstance.getMap("country_codes");
-//        map_country_codes.put("UGANDA", "UG");
-//
-//        System.out.println("COUNTRY_CODE >>> " + map_country_codes.get("UGANDA"));
-//
-//        hazelcastInstance.shutdown();
-        //fetchAllCountries();
         fetchAllCountryCodes();
+
     }
 
     private static void fetchAllCountryCodes() throws FileNotFoundException {
 
-        //connnect to the HZ-Instance
+        //connnect to the HZ-Instance  
         HazelcastInstance hazelcastInstance = HazelcastClient.newHazelcastClient();
         IMap<Object, Object> map_country_codes = hazelcastInstance.getMap("country_codes");
 

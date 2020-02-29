@@ -39,7 +39,7 @@ public class SQLBasedMapStore implements MapStore<String, String>, MapLoaderLife
             String JDBC_USER = (String) properties.get("dbuser");
             String JDBC_PASS = (String) properties.get("dbpass");
             //String dbschema = (String) properties.get("dbschema");
-            
+
             //fetch the key and value details
             key_name = (String) properties.get("key");
             value_name = (String) properties.get("value");
