@@ -38,13 +38,13 @@ public class SQLBasedMapStore implements MapStore<String, String>, MapLoaderLife
             String JDBC_DB_URL = (String) properties.get("dburl");
             String JDBC_USER = (String) properties.get("dbuser");
             String JDBC_PASS = (String) properties.get("dbpass");
-            //String dbschema = (String) properties.get("dbschema");
+            String dbschema = (String) properties.get("dbschema");
 
             //fetch the key and value details
             key_name = (String) properties.get("key");
             value_name = (String) properties.get("value");
-            //table_name = (dbschema + "." + mapName);
-            table_name = mapName;
+            table_name = (dbschema + "." + mapName);
+            //table_name = mapName;
 
             GenericObjectPool.Config conPoolCfg = new GenericObjectPool.Config();
             conPoolCfg.maxActive = 15;
@@ -115,7 +115,7 @@ public class SQLBasedMapStore implements MapStore<String, String>, MapLoaderLife
             connection = poolingDataSource.getConnection();
 
             connection.createStatement().executeUpdate(String.format("INSERT INTO %s VALUES ('%s','%s')", table_name, key, value));
-            connection.commit();
+            //connection.commit();
 
         } catch (java.sql.SQLIntegrityConstraintViolationException ex) {
             ex.printStackTrace(System.err);
@@ -150,7 +150,7 @@ public class SQLBasedMapStore implements MapStore<String, String>, MapLoaderLife
             connection = poolingDataSource.getConnection();
 
             connection.createStatement().executeUpdate(String.format("DELETE FROM %s WHERE %s = %s", table_name, key_name, key));
-            connection.commit();
+            //connection.commit();
 
         } catch (SQLException ex) {
             ex.printStackTrace(System.err);

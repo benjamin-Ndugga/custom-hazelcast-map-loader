@@ -40,12 +40,13 @@
             <type>jar</type>
             <scope>test</scope>
         </dependency>
+        
         <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derbyclient</artifactId>
-            <version>10.1.1.0</version>
-            <scope>compile</scope>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.0.2</version>
         </dependency>
+
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-pool2</artifactId>
@@ -54,6 +55,13 @@
             <scope>compile</scope>
         </dependency>
         
+        <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+            <version>1.4</version>
+            <type>jar</type>
+            <scope>compile</scope>
+        </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents.client5</groupId>
             <artifactId>httpclient5</artifactId>
@@ -71,17 +79,9 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.1</version>
             <type>jar</type>
-        </dependency>
-        
-        <dependency>
-            <groupId>commons-dbcp</groupId>
-            <artifactId>commons-dbcp</artifactId>
-            <version>1.4</version>
-            <type>jar</type>
-        </dependency>
+        </dependency>     
     </dependencies>
-    
-    
+   
     
     <build>
         <plugins>
@@ -113,7 +113,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>com.hazelcast.custom.MapPredicateTests</mainClass>
+                            <mainClass>com.hazelcast.custom.Server</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
