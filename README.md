@@ -3,7 +3,9 @@
 This is a proposal to allow for auto-creation of a map store
 
 ### Sample XML Configuration
-
+We create a simple Map Configuration that looks like the one below:
+Taking the advantage of the properties section, we define the Database Connectivity details and the table name name that will persist the data for this map.
+```sh
 <map name="country_codes">
         <in-memory-format>BINARY</in-memory-format>
         <backup-count>1</backup-count>
@@ -32,3 +34,4 @@ This is a proposal to allow for auto-creation of a map store
             </properties>
         </map-store>
     </map>
+```
