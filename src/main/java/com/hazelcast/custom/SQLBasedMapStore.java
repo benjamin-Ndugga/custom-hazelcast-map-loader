@@ -9,12 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import org.apache.commons.dbcp.ConnectionFactory;
-import org.apache.commons.dbcp.DriverManagerConnectionFactory;
-import org.apache.commons.dbcp.PoolableConnectionFactory;
-import org.apache.commons.dbcp.PoolingDataSource;
-import org.apache.commons.pool.ObjectPool;
-import org.apache.commons.pool.impl.GenericObjectPool;
 
 /**
  * @since 20/02/2020
@@ -24,21 +18,17 @@ import org.apache.commons.pool.impl.GenericObjectPool;
 public class SQLBasedMapStore implements MapStore<String, String>, MapLoaderLifecycleSupport {
 
     private String key_name, value_name, table_name;
-    private PoolingDataSource poolingDataSource;
+    private Pool pool;
 
     @Override
     public void init(HazelcastInstance hi, Properties properties, String mapName) {
         Connection connection = null;
         try {
 
-            //load the database driver
-            Class.forName(properties.getProperty("dbdriver"));
-
             //read properties for this map
-            String JDBC_DB_URL = (String) properties.get("dburl");
-            String JDBC_USER = (String) properties.get("dbuser");
-            String JDBC_PASS = (String) properties.get("dbpass");
             String dbschema = (String) properties.get("dbschema");
+
+            pool = new ApachePool(properties);
 
             //fetch the key and value details
             key_name = (String) properties.get("key");
@@ -46,28 +36,11 @@ public class SQLBasedMapStore implements MapStore<String, String>, MapLoaderLife
             table_name = (dbschema + "." + mapName);
             //table_name = mapName;
 
-            GenericObjectPool.Config conPoolCfg = new GenericObjectPool.Config();
-            conPoolCfg.maxActive = 15;
-            conPoolCfg.maxIdle = 8;
-            conPoolCfg.maxWait = 60000;
-            conPoolCfg.minIdle = 2;
 
-            ObjectPool connectionPool = new GenericObjectPool(null, conPoolCfg);
-
-            ConnectionFactory connectionFactory = new DriverManagerConnectionFactory(JDBC_DB_URL, JDBC_USER, JDBC_PASS);
-
-            PoolableConnectionFactory poolableConnectionFactory = new PoolableConnectionFactory(connectionFactory, connectionPool, null, null, false, true);
-
-            poolingDataSource = new PoolingDataSource(connectionPool);
-
-            connection = poolingDataSource.getConnection();
-
+            connection = pool.getConnection();
             DatabaseMetaData databaseMetaData = connection.getMetaData();
-
             ResultSet resultSet = databaseMetaData.getTables(null, null, mapName, new String[]{"TABLE", "VIEW"});
-
             boolean tableExists = false;
-
             while (resultSet.next()) {
 
                 tableExists = true;
@@ -81,15 +54,13 @@ public class SQLBasedMapStore implements MapStore<String, String>, MapLoaderLife
             }
 
             if (!tableExists) {
-
                 System.out.println("Creating Table: " + mapName + ".");
-
                 //create table using the mapName as the table name
                 connection.createStatement().execute("CREATE TABLE " + mapName + "(" + key_name + " VARCHAR(100)," + value_name + " VARCHAR(100), PRIMARY KEY (" + key_name + "))");
             }
             System.out.println("initialising table for this map <" + mapName + "> done...");
 
-        } catch (ClassNotFoundException | SQLException ex) {
+        } catch (SQLException ex) {
             ex.printStackTrace(System.err);
             System.exit(1);
         } finally {
@@ -112,7 +83,7 @@ public class SQLBasedMapStore implements MapStore<String, String>, MapLoaderLife
     public void store(String key, String value) {
         Connection connection = null;
         try {
-            connection = poolingDataSource.getConnection();
+            connection = pool.getConnection();
 
             connection.createStatement().executeUpdate(String.format("INSERT INTO %s VALUES ('%s','%s')", table_name, key, value));
             //connection.commit();
@@ -147,7 +118,7 @@ public class SQLBasedMapStore implements MapStore<String, String>, MapLoaderLife
 
         Connection connection = null;
         try {
-            connection = poolingDataSource.getConnection();
+            connection = pool.getConnection();
 
             connection.createStatement().executeUpdate(String.format("DELETE FROM %s WHERE %s = %s", table_name, key_name, key));
             //connection.commit();
@@ -181,7 +152,7 @@ public class SQLBasedMapStore implements MapStore<String, String>, MapLoaderLife
         String value = null;
         try {
 
-            connection = poolingDataSource.getConnection();
+            connection = pool.getConnection();
 
             ResultSet resultSet = connection.createStatement().executeQuery(String.format("SELECT %s FROM %s WHERE %s = '%s'", value_name, table_name, key_name, key));
 
@@ -224,7 +195,7 @@ public class SQLBasedMapStore implements MapStore<String, String>, MapLoaderLife
         String value;
 
         try {
-            connection = poolingDataSource.getConnection();
+            connection = pool.getConnection();
 
             Map<String, String> result = new HashMap<>();
 

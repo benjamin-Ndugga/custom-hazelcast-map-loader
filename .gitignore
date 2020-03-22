@@ -1,4 +1,6 @@
-/src/test/
 /nb-configuration.xml
 country-details.json
 nbactions.xml
+.idea
+target/
+*.iml
