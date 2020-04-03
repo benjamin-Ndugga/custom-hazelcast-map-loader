@@ -87,9 +87,6 @@ public class SQLBasedMapStore implements MapStore<String, String>, MapLoaderLife
 
             connection.createStatement().executeUpdate(String.format("INSERT INTO %s VALUES ('%s','%s')", table_name, key, value));
             //connection.commit();
-
-        } catch (java.sql.SQLIntegrityConstraintViolationException ex) {
-            ex.printStackTrace(System.err);
         } catch (SQLException ex) {
             ex.printStackTrace(System.err);
         } finally {
