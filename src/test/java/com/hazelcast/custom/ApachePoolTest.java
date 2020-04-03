@@ -3,6 +3,8 @@ package com.hazelcast.custom;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.testcontainers.containers.MySQLContainer;
@@ -13,34 +15,48 @@ public class ApachePoolTest {
 
     @Rule
     public final MySQLContainer mysql = new MySQLContainer("mysql:5.5")
-            .withUsername("hazelcast")
-            .withPassword("pass123");
+            .withPassword("pass123")
+            .withDatabaseName("mydb");
+
+    private HazelcastInstance instance;
+
+    @Before
+    public void setUp() {
+        // this mysql.port variable is referenced in hazelcast.xml
+        // we need the variable to point to a local port where the mysql running inside the docker exposed.
+        System.setProperty("mysql.port", mysql.getFirstMappedPort().toString());
+
+        instance = Hazelcast.newHazelcastInstance();
+    }
+
+    @After
+    public void tearDown() {
+        instance.shutdown();
+    }
 
     @Test
     public void testMapStoreInstantiation() {
-        HazelcastInstance hazelcastInstance = Hazelcast.newHazelcastInstance();
-        IMap<Integer, String> map = hazelcastInstance.getMap("capitals");
-        map.put(0, "foo");
+        IMap<String, String> map = instance.getMap("capitals");
+        map.put("key", "value");
 
-        String s = map.get(0);
-        assertEquals("foo", s);
+        String s = map.get("key");
+        assertEquals("value", s);
     }
 
     @Test
     public void testStoreAndLoad() {
-        HazelcastInstance instance1 = Hazelcast.newHazelcastInstance();
-        IMap<Integer, String> map1 = instance1.getMap("capitals");
-        map1.put(0, "foo");
+        IMap<String, String> map1 = instance.getMap("capitals");
+        map1.put("key", "value");
         map1.flush();
-        instance1.shutdown();
+        instance.shutdown();
 
         // shutdown the first Hazelcast instance and start a new one.
         // the new instance is using the same backing mysql store as the
         // first one. Hence it should see the value inserted above.
-        HazelcastInstance instance2 = Hazelcast.newHazelcastInstance();
-        IMap<Integer, String> map2 = instance2.getMap("capitals");
-        String s = map2.get(0);
-        assertEquals("foo", s);
+        instance = Hazelcast.newHazelcastInstance();
+        IMap<String, String> map2 = instance.getMap("capitals");
+        String s = map2.get("key");
+        assertEquals("value", s);
     }
 
 }
